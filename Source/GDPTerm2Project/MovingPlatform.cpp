@@ -74,19 +74,19 @@ void AMovingPlatform::MovePlatform(float DeltaTime)
 
 void AMovingPlatform::RotatePlatform(float DeltaTime)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s Rotating..."), *GetName());
+	AddActorLocalRotation(RotationVelocity * DeltaTime);
 }
 
 
 // Function is used in IF statement of MovePlatform function
-bool AMovingPlatform::ShouldPlatformReturn()
+bool AMovingPlatform::ShouldPlatformReturn() const
 {
 	return GetDistanceMoved() > MaxMoveDistance;
 }
 
 
 // Function used to calculate the distance between the actor's start location and the current location
-float AMovingPlatform::GetDistanceMoved()
+float AMovingPlatform::GetDistanceMoved() const
 {
 	return FVector::Distance(StartLocation, GetActorLocation());
 }

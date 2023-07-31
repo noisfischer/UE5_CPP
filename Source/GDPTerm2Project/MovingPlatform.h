@@ -43,25 +43,28 @@ public:
 
 private:	
 
-	UPROPERTY(EditAnywhere, Category="Moving Platform")
+	UPROPERTY(EditAnywhere, Category="Moving")
 	FVector PlatformVelocity = FVector(100, 0, 0);
 
 	FVector StartLocation;
 
-	UPROPERTY(VisibleAnywhere, Category="Moving Platform")
+	UPROPERTY(VisibleAnywhere, Category="Moving")
 	float DistanceMoved;
 
-	UPROPERTY(EditAnywhere, Category="Moving Platform")
+	UPROPERTY(EditAnywhere, Category="Moving")
 	float MaxMoveDistance = 100.0f;
+
+	UPROPERTY(EditAnywhere, Category="Rotation")
+	FRotator RotationVelocity;
 
 	// Creates functions. Use void if function isn't meant to return anything
 	void MovePlatform(float DeltaTime);
 	void RotatePlatform(float DeltaTime);
 
-	// Defines a function that returns a bool
-	bool ShouldPlatformReturn();
+	// Defines a function that returns a bool. const does not allow for modification and cannot call on non-const functions
+	bool ShouldPlatformReturn() const;
 
-	// Defines a function  that returns a float
-	float GetDistanceMoved();
+	// Defines a function that returns a float.
+	float GetDistanceMoved() const;
 
 };
