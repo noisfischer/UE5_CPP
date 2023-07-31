@@ -41,15 +41,27 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Moving Platform")
+private:	
+
+	UPROPERTY(EditAnywhere, Category="Moving Platform")
 	FVector PlatformVelocity = FVector(100, 0, 0);
 
 	FVector StartLocation;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Moving Platform")
+	UPROPERTY(VisibleAnywhere, Category="Moving Platform")
 	float DistanceMoved;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Moving Platform")
+	UPROPERTY(EditAnywhere, Category="Moving Platform")
 	float MaxMoveDistance = 100.0f;
+
+	// Creates functions. Use void if function isn't meant to return anything
+	void MovePlatform(float DeltaTime);
+	void RotatePlatform(float DeltaTime);
+
+	// Defines a function that returns a bool
+	bool ShouldPlatformReturn();
+
+	// Defines a function  that returns a float
+	float GetDistanceMoved();
 
 };

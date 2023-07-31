@@ -27,15 +27,7 @@ AMovingPlatform::AMovingPlatform()
 void AMovingPlatform::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// // Add two variables together
-	// MyNewNumber = InputAInt + InputBFloat;
-	//
-	// MyVector = GetActorLocation();
-
-	// Set Start Location to Actor spawn point
 	StartLocation = GetActorLocation();
-	
 }
 
 // Called every frame
@@ -43,12 +35,72 @@ void AMovingPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Calls on functions
+	MovePlatform(DeltaTime);
+	RotatePlatform(DeltaTime);
+}	
+
+// Calls on function defined in header	
+void AMovingPlatform::MovePlatform(float DeltaTime)
+{
+	// If the platform moves too far from start position, it will update its start position and move in the opposite direction
+	if (ShouldPlatformReturn())
+	{
+		// Creates new local variable that gets the full forward direction of the platform velocity vector
+		FVector MoveDirection = PlatformVelocity.GetSafeNormal();
+			
+		// Set new start location
+		StartLocation = StartLocation + MoveDirection * MaxMoveDistance;
+		SetActorLocation(StartLocation);
+			
+		// Reverse direction
+		PlatformVelocity = -PlatformVelocity;
+	}
+
+	else
+	{
+		// Get current actor location
+		FVector CurrentLocation = GetActorLocation();
+
+		// Add current location vector to platform velocity vector (speed of platform) using Delta Time (frame rate independent)
+		CurrentLocation = CurrentLocation + PlatformVelocity * DeltaTime;
+
+		// Location of platform updates as per the above statement
+		SetActorLocation(CurrentLocation);
+	}
+	
+}
+
+
+void AMovingPlatform::RotatePlatform(float DeltaTime)
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s Rotating..."), *GetName());
+}
+
+
+// Function is used in IF statement of MovePlatform function
+bool AMovingPlatform::ShouldPlatformReturn()
+{
+	return GetDistanceMoved() > MaxMoveDistance;
+}
+
+
+// Function used to calculate the distance between the actor's start location and the current location
+float AMovingPlatform::GetDistanceMoved()
+{
+	return FVector::Distance(StartLocation, GetActorLocation());
+}
+
+
+
+// Old Code
+
 // Method 1 of moving platform	
-	// // Set local variable
-	// FVector LocalVector = MyVector;
-	// // Move platform forward in Y location by 1 each tick of gameplay
-	// MyVector.Y = MyVector.Y + 1;
-	// SetActorLocation(LocalVector);
+// // Set local variable
+// FVector LocalVector = MyVector;
+// // Move platform forward in Y location by 1 each tick of gameplay
+// MyVector.Y = MyVector.Y + 1;
+// SetActorLocation(LocalVector);
 
 // // Method 2 of moving platform
 // 	
@@ -60,38 +112,3 @@ void AMovingPlatform::Tick(float DeltaTime)
 // 	
 // 	// Set Location
 // 	SetActorLocation(CurrentLocation);
-
-// Method 3 of moving platform - to specified vector location
-	
-	// Get current actor location
-	FVector CurrentLocation = GetActorLocation();
-
-	// Add current location vector to platform velocity vector (speed of platform) using Delta Time (frame rate independent)
-	CurrentLocation = CurrentLocation + PlatformVelocity * DeltaTime;
-
-	// Location of platform updates as per the above statement
-	SetActorLocation(CurrentLocation);
-
-// Bounce platform back to starting position once it reaches a max distance away from start position
-	
-	// :: looks at the functions within the FVector class. Looking for the distance between start and current location vectors
-	DistanceMoved = FVector::Distance(StartLocation, CurrentLocation);
-
-	// If the platform moves too far from start position, it will update its start position and move in the opposite direction
-	if (DistanceMoved > MaxMoveDistance)
-	{
-		// Creates new local variable that gets the full forward direction of the platform velocity vector
-		FVector MoveDirection = PlatformVelocity.GetSafeNormal();
-		
-		// Set new start location
-		StartLocation = StartLocation + MoveDirection * MaxMoveDistance;
-		SetActorLocation(StartLocation);
-		
-		// Reverse direction
-		PlatformVelocity = -PlatformVelocity;
-	}
-	
-	
-	
-}
-
