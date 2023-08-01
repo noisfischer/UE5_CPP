@@ -13,7 +13,6 @@ AMovingPlatform::AMovingPlatform()
 
 	// Create static mesh component and attach to actor root
 	MovingPlatformMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh"));
-	MovingPlatformMesh->SetupAttachment(RootComponent);
 
 	// Find UE5 starter cube as the mesh
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cube.Shape_Cube"));
