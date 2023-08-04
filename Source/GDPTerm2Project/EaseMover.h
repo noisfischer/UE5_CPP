@@ -29,7 +29,7 @@ private:
 	FVector TargetLocation;
 	FVector CurrentLocation;
 
-	
+	UPROPERTY(EditAnywhere, Category = "Move")
 	float StartTime = 0.0f; // The time the movement started
 	
 	UPROPERTY(EditAnywhere, Category = "Move")
