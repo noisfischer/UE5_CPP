@@ -1,48 +1,51 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "MyRotator.generated.h"
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GDPTERM2PROJECT_API UMyRotator : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public: 
 	// Sets default values for this component's properties
 	UMyRotator();
+
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 private:
-	
-	// Define variables and functions for rotate
 	FRotator StartRotation;
-	FRotator TargetRotation;
 	FRotator CurrentRotation;
-	
+	FRotator TargetRotation;
+
+	UPROPERTY(EditAnywhere, Category="Rotate", meta=(ClampMin="0", ClampMax="20", UIMin="0", UIMax="20"))
+	float RotationTime = 5.0f;  // default value
+
 	UPROPERTY(EditAnywhere, Category="Rotate")
 	FRotator RotateOffset;
-	UPROPERTY(EditAnywhere, Category="Rotate", meta=(ClampMin="0", ClampMax="1000", UIMin="0", UIMax="1000"))
-	float RotationTime = 1.0f;
+
+	// Current elapsed time since rotation started
+	float CurrentTime = 0.0f;
+
 	UPROPERTY(EditAnywhere, Category="Rotate")
-	bool BRotateReverse = false;
+	bool BRotateReverse;
+
 	UPROPERTY(EditAnywhere, Category="Rotate")
-	bool BContinuousRotation = false;
-	
+	bool BContinuousRotation;
+
+	// Private Functions
 	void MasterRotate(float DeltaTime);
-	void FRotateReverse(float DeltaTime);
 	void FRotateForward(float DeltaTime);
+	void FRotateReverse(float DeltaTime);
 	void FContinuousRotate(float DeltaTime);
+	void ApplyRotation(float DeltaTime);
+	float CubicEaseInOut(float t);
 };
 
