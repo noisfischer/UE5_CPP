@@ -25,8 +25,6 @@ void UMover::BeginPlay()
 	
 	// Start Location and Rotation of owner actor on BeginPlay
 	StartLocation = GetOwner()->GetActorLocation();
-	StartRotation = GetOwner()->GetActorRotation();
-	
 }
 
 
@@ -36,7 +34,6 @@ void UMover::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponent
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	MasterMove(DeltaTime);
-	MasterRotate(DeltaTime);
 }
 
 
@@ -58,29 +55,6 @@ void UMover::MasterMove(float DeltaTime)
 		else
 		{
 			FMoveForward(DeltaTime);
-		}
-	}
-}
-
-
-// MASTER ROTATE FUNCTION
-void UMover::MasterRotate(float DeltaTime)
-{
-	CurrentRotation = GetOwner()->GetActorRotation();
-
-	if(BContinuousRotation == true)
-	{
-		FContinuousRotate(DeltaTime);
-	}
-	else
-	{
-		if(BRotateReverse == true)
-		{
-			FRotateReverse(DeltaTime);
-		}
-		else
-		{
-			FRotateForward(DeltaTime);
 		}
 	}
 }
@@ -128,59 +102,6 @@ void UMover::FMoveReverse(float DeltaTime)
 			StartLocation = TargetLocation;
 		}
 	}
-}
-
-
-// Function for forward rotation
-void UMover::FRotateForward(float DeltaTime)
-{
-	if(BRotateReverse == false)
-	{
-		TargetRotation = StartRotation + RotateOffset;
-		FRotator NewRotation = FMath::RInterpConstantTo(CurrentRotation, TargetRotation, DeltaTime, (1.0f / RotationTime) * 1000);
-		GetOwner()->SetActorRotation(NewRotation);
-
-		if(FMath::Abs((CurrentRotation - TargetRotation).GetNormalized().Yaw) <= SMALL_NUMBER)
-		{
-			BRotateReverse = true;
-			StartRotation = TargetRotation;
-		}
-	}
-}
-
-// Function for reverse rotation
-void UMover::FRotateReverse(float DeltaTime)
-{
-	if(BRotateReverse == true)
-	{
-		TargetRotation = StartRotation - RotateOffset;
-		FRotator NewRotation = FMath::RInterpConstantTo(CurrentRotation, TargetRotation, DeltaTime, (1.0f / RotationTime) * 1000);
-		GetOwner()->SetActorRotation(NewRotation);
-
-		if(FMath::Abs((CurrentRotation - TargetRotation).GetNormalized().Yaw) <= SMALL_NUMBER)
-		{
-			BRotateReverse = false;
-			StartRotation = TargetRotation;
-		}
-	}
-}
-
-
-// Function for continuous rotation
-void UMover::FContinuousRotate(float DeltaTime)
-{
-	if(BRotateReverse == false)
-	{
-		TargetRotation = CurrentRotation + RotateOffset;
-	}
-
-	else
-	{
-		TargetRotation = CurrentRotation - RotateOffset;
-	}
-		
-	FRotator NewRotation = FMath::RInterpConstantTo(CurrentRotation, TargetRotation, DeltaTime, (1.0f / RotationTime) * 1000);
-	GetOwner()->SetActorRotation(NewRotation);
 }
 
 

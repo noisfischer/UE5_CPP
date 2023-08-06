@@ -45,24 +45,4 @@ private:
 	void FMoveReverse(float DeltaTime);
 	void FMoveForward(float DeltaTime);
 	void FContinuousMove(float DeltaTime);
-	
-
-	// Define variables and functions for rotate
-	FRotator StartRotation;
-	FRotator TargetRotation;
-	FRotator CurrentRotation;
-	
-	UPROPERTY(EditAnywhere, Category="Rotate")
-	FRotator RotateOffset;
-	UPROPERTY(EditAnywhere, Category="Rotate", meta=(ClampMin="0", ClampMax="1000", UIMin="0", UIMax="1000"))
-	float RotationTime = 1.0f;
-	UPROPERTY(EditAnywhere, Category="Rotate")
-	bool BRotateReverse = false;
-	UPROPERTY(EditAnywhere, Category="Rotate")
-	bool BContinuousRotation = false;
-	
-	void MasterRotate(float DeltaTime);
-	void FRotateReverse(float DeltaTime);
-	void FRotateForward(float DeltaTime);
-	void FContinuousRotate(float DeltaTime);
 };

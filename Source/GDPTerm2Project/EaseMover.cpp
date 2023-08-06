@@ -19,7 +19,6 @@ void UEaseMover::BeginPlay()
         GetOwner()->GetRootComponent()->SetMobility(EComponentMobility::Movable);
     }
     StartLocation = GetOwner()->GetActorLocation();
-    StartRotation = GetOwner()->GetActorRotation();
 }
 
 // Called every frame
@@ -28,7 +27,6 @@ void UEaseMover::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
     MasterMove(DeltaTime);
-    MasterRotate(DeltaTime);
 }
 
 // Master Move Function
@@ -106,75 +104,4 @@ void UEaseMover::FContinuousMove(float DeltaTime)
     float Alpha = FMath::Clamp((GetWorld()->GetTimeSeconds() - StartTime) / MoveTime, 0.0f, 1.0f);
     FVector NewLocation = SmoothstepInterp(CurrentLocation, TargetLocation, Alpha);
     GetOwner()->SetActorLocation(NewLocation);
-}
-
-// Master Rotate Function
-void UEaseMover::MasterRotate(float DeltaTime)
-{
-    CurrentRotation = GetOwner()->GetActorRotation();
-    if(BContinuousRotation == true)
-    {
-        FContinuousRotate(DeltaTime);
-    }
-    else
-    {
-        if(BRotateReverse == true)
-        {
-            FRotateReverse(DeltaTime);
-        }
-        else
-        {
-            FRotateForward(DeltaTime);
-        }
-    }
-}
-
-// Function for forward rotation
-void UEaseMover::FRotateForward(float DeltaTime)
-{
-    if(BRotateReverse == false)
-    {
-        TargetRotation = StartRotation + RotateOffset;
-        FRotator NewRotation = FMath::RInterpConstantTo(CurrentRotation, TargetRotation, DeltaTime, (1.0f / RotationTime) * 1000);
-        GetOwner()->SetActorRotation(NewRotation);
-
-        if(FMath::Abs((CurrentRotation - TargetRotation).GetNormalized().Yaw) <= SMALL_NUMBER)
-        {
-            BRotateReverse = true;
-            StartRotation = TargetRotation;
-        }
-    }
-}
-
-// Function for reverse rotation
-void UEaseMover::FRotateReverse(float DeltaTime)
-{
-    if(BRotateReverse == true)
-    {
-        TargetRotation = StartRotation - RotateOffset;
-        FRotator NewRotation = FMath::RInterpConstantTo(CurrentRotation, TargetRotation, DeltaTime, (1.0f / RotationTime) * 1000);
-        GetOwner()->SetActorRotation(NewRotation);
-
-        if(FMath::Abs((CurrentRotation - TargetRotation).GetNormalized().Yaw) <= SMALL_NUMBER)
-        {
-            BRotateReverse = false;
-            StartRotation = TargetRotation;
-        }
-    }
-}
-
-// Function for continuous rotation
-void UEaseMover::FContinuousRotate(float DeltaTime)
-{
-    if(BRotateReverse == false)
-    {
-        TargetRotation = CurrentRotation + RotateOffset;
-    }
-    else
-    {
-        TargetRotation = CurrentRotation - RotateOffset;
-    }
-        
-    FRotator NewRotation = FMath::RInterpConstantTo(CurrentRotation, TargetRotation, DeltaTime, (1.0f / RotationTime) * 1000);
-    GetOwner()->SetActorRotation(NewRotation);
 }
