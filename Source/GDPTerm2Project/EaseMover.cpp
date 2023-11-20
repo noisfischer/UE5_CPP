@@ -13,11 +13,14 @@ UEaseMover::UEaseMover()
 void UEaseMover::BeginPlay()
 {
     Super::BeginPlay();
-    
+
+    // Ensure the owning actor's root component has mobility set to movable.
     if(GetOwner()->GetRootComponent())
     {
         GetOwner()->GetRootComponent()->SetMobility(EComponentMobility::Movable);
     }
+
+    // Initialize the starting location to the actor's current location.
     StartLocation = GetOwner()->GetActorLocation();
 }
 
@@ -26,19 +29,24 @@ void UEaseMover::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+    // Perform the movement logic in each tick.
     MasterMove(DeltaTime);
 }
 
-// Master Move Function
+// Determines movement behavior
 void UEaseMover::MasterMove(float DeltaTime)
 {
+    // Update the current location.
     CurrentLocation = GetOwner()->GetActorLocation();
+
+    // Check if the movement should be continuous.
     if(BContinuousMovement == true)
     {
         FContinuousMove(DeltaTime);
     }
     else
     {
+        // Determine if the movement should be in reverse or forward.
         if(BMoveReverse == true)
         {
             FMoveReverse(DeltaTime);
@@ -50,12 +58,11 @@ void UEaseMover::MasterMove(float DeltaTime)
     }
 }
 
-
-// Function for ease motion
+// Function for smoothstep interpolation: Provides ease-in and ease-out motion.
 FVector UEaseMover::SmoothstepInterp(const FVector& Current, const FVector& Target, float Alpha)
 {
-    float SmoothAlpha = Alpha * Alpha * (3.0f - 2.0f * Alpha);
-    return FMath::Lerp(Current, Target, SmoothAlpha);
+    float SmoothAlpha = Alpha * Alpha * (3.0f - 2.0f * Alpha); // Calculate the smoothstep value of Alpha.
+    return FMath::Lerp(Current, Target, SmoothAlpha); // Linearly interpolate between the current and target locations using the smoothstep value
 }
 
 // Function for forward movement
@@ -63,11 +70,19 @@ void UEaseMover::FMoveForward(float DeltaTime)
 {
     if(!BMoveReverse)
     {
+        // Set the target location for forward movement.
         TargetLocation = StartLocation + MoveOffset;
+
+        // Calculate the interpolation factor (Alpha).
         float Alpha = FMath::Clamp((GetWorld()->GetTimeSeconds() - StartTime) / MoveTime, 0.0f, 1.0f);
+
+        // Interpolate the location using smoothstep.
         FVector NewLocation = SmoothstepInterp(CurrentLocation, TargetLocation, Alpha);
+
+        // Update the actor's location.
         GetOwner()->SetActorLocation(NewLocation);
 
+        // Check if the movement is complete and switch to reverse movement.
         if(FVector::Distance(CurrentLocation, TargetLocation) <= 0.1f)
         {
             BMoveReverse = true;
@@ -82,11 +97,19 @@ void UEaseMover::FMoveReverse(float DeltaTime)
 {
     if(BMoveReverse)
     {
+        // Set the target location for reverse movement.
         TargetLocation = StartLocation - MoveOffset;
+
+        // Calculate the interpolation factor (Alpha).
         float Alpha = FMath::Clamp((GetWorld()->GetTimeSeconds() - StartTime) / MoveTime, 0.0f, 1.0f);
+
+        // Interpolate the location using smoothstep.
         FVector NewLocation = SmoothstepInterp(CurrentLocation, TargetLocation, Alpha);
+        
+        // Update the actor's location.
         GetOwner()->SetActorLocation(NewLocation);
 
+        // Check if the movement is complete and switch to forward movement.
         if(FVector::Distance(CurrentLocation, TargetLocation) <= 0.1f)
         {
             BMoveReverse = false;
@@ -100,8 +123,15 @@ void UEaseMover::FMoveReverse(float DeltaTime)
 // Function for continuous movement
 void UEaseMover::FContinuousMove(float DeltaTime)
 {
+    // Determine the target location based on the current movement direction.
     TargetLocation = BMoveReverse ? CurrentLocation - MoveOffset : CurrentLocation + MoveOffset;
+    
+    // Calculate the interpolation factor (Alpha).
     float Alpha = FMath::Clamp((GetWorld()->GetTimeSeconds() - StartTime) / MoveTime, 0.0f, 1.0f);
+
+    // Interpolate the location using smoothstep.
     FVector NewLocation = SmoothstepInterp(CurrentLocation, TargetLocation, Alpha);
+    
+    // Update the actor's location.
     GetOwner()->SetActorLocation(NewLocation);
 }
