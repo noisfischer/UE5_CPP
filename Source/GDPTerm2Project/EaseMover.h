@@ -25,29 +25,31 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	FVector StartLocation;
-	FVector TargetLocation;
-	FVector CurrentLocation;
-
+	FVector StartLocation; // Starting location of the component.
+	FVector TargetLocation; // Target location to move to.
+	FVector CurrentLocation; // Current location of the component.
+	
+	// Movement properties
 	UPROPERTY(EditAnywhere, Category = "Move")
-	float StartTime = 0.0f; // The time the movement started
+	float StartTime = 0.0f; // When movement should start
 	
 	UPROPERTY(EditAnywhere, Category = "Move")
-	float MoveTime = 1.0f; // The total time the movement should take
+	float MoveTime = 1.0f; // Duration from start to end point of move offset
 	
 	UPROPERTY(EditAnywhere, Category="Move")
-	FVector MoveOffset;
+	FVector MoveOffset; // Distance actor should move
 	
 	UPROPERTY(EditAnywhere, Category="Move")
-	bool BMoveReverse = false;
+	bool BMoveReverse = false; // Flag for reversing the movement.
 
 	UPROPERTY(EditAnywhere, Category="Move")
-	bool BContinuousMovement = false;
-
-	FVector SmoothstepInterp(const FVector& Current, const FVector& Target, float Alpha); // Function for ease motion
-	void MasterMove(float DeltaTime);
-	void FMoveReverse(float DeltaTime);
-	void FMoveForward(float DeltaTime);
-	void FContinuousMove(float DeltaTime);
+	bool BContinuousMovement = false; // Flag for continuous movement.
+	
+	// Internal functions for movement logic.
+	FVector SmoothstepInterp(const FVector& Current, const FVector& Target, float Alpha); // Function for smoothstep interpolation.
+	void MasterMove(float DeltaTime); // Master movement function.
+	void FMoveReverse(float DeltaTime); // Function to handle reverse movement.
+	void FMoveForward(float DeltaTime); // Function to handle forward movement.
+	void FContinuousMove(float DeltaTime); // Function to handle continuous movement.
 	
 };
