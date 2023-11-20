@@ -44,10 +44,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Effects")
 	URadialForceComponent* RadialForce;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
 
 	FTimerHandle CountdownTimerHandle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Destroyed")
+	bool bHasBeenDestroyed = false;
 
 	void Countdown();
 };
