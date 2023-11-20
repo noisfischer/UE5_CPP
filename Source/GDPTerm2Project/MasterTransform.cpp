@@ -1,5 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// Incorporates scripts from EaseMover, MyRotator, and Scaler
 
 #include "MasterTransform.h"
 
